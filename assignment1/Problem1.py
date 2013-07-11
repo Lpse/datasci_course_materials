@@ -55,19 +55,17 @@ def twitterreq(url, method, parameters):
 
   return response
 
-### Lpse_Code for print output.txt. Here open de file to write.
-##log = open("output.txt", "w")
-### End of Lpse_Code
 
-def fetchsamples():
+def fetchsamples(lineValue):
   url = "https://stream.twitter.com/1/statuses/sample.json"
   parameters = []
   response = twitterreq(url, "GET", parameters)
   for line in response:
-    print (line.strip())
-##    # Lpse_Code: here write de file
-##    print(line.strip(), file = log)
-##    # End of Lpse_Code
+    lineValue+=1
+    if(lineValue<21):
+      print (line.strip())
+
 
 if __name__ == '__main__':
-  fetchsamples()
+  lineValue=int(0)
+  fetchsamples(lineValue)

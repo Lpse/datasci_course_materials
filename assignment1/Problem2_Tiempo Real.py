@@ -1,19 +1,19 @@
 # -*- coding: cp1252 -*-
 import sys
 import re
-import json
+import twitterstream
+
 
 def lines(fp):
-    # When reading is done completely, iterator is at the EOF --> This function returns "0 lines"
     print str(len(fp.readlines()))
 
 def hw(line,tw,tu,suma):
     #   Function to print result in a readable format
-    #print "Line: ",line,"\n","TWEET: [",tw,"]"
-    #print "< Total Sentiment: ",suma," >"
+    print "Line: ",line,"\n","TWEET: [",tw,"]"
+    print "< Sentiment: ",suma," >"
     
     for k,v in sorted(tu.items()):
-        print line," : <",u'{0}: {1}'.format(k,v),">"
+        print "<",u'{0}: {1}'.format(k,v),">"
 
     print "\n"
 
@@ -62,45 +62,45 @@ def findStr(line,str,mode):
     return strOut
 
 def main():
-    sent_file = open(sys.argv[1])   #   File AFINN-111.txt 
-    tweet_file = open(sys.argv[2])  #   File Output.txt 
+    sent_file = open("AFINN-111.txt")
+    tweet_file = open("twitterstream.py")
+
+    print "Assigment1-PROBLEM2:\n"
+
 
     searchInitField="\"description\":\""    
     searchEndField="\",\"protected"
+    parameters=[]
+    url = "https://stream.twitter.com/1/statuses/sample.json"
 
     # Create dictionary from AFINN-111.txt
     AffinDict = {}
-    AffinDict=CreateDictionary(sent_file,AffinDict)
-
-    # Init aux variables
     SentimentsTuple={}
+    AffinDict=CreateDictionary(sent_file,AffinDict)
     lineValue=int(0)
     suma=int(0)
-
-    # Read each line of the output.txt file
-    while 1:
-        tweet=tweet_file.readline()
-        tweet=tweet.strip()
-        if not tweet:
-            break
+    
+    response=twitterstream.twitterreq(url,"GET",parameters)
+    for line in response:
+        # Cut the tweet
+        lineValue+=1
+        tweet=line.strip()
+        tweet=findStr(tweet,searchInitField,0)
+        tweet=findStr(tweet,searchEndField,1)
+        suma=0
+        # Select tweets in which sentiment words appear
+        tweetReceived=checkListinString(AffinDict,tweet)
+        SentimentsTuple.clear()
+        if (tweetReceived==""):
+            SentimentsTuple={'--':int(0)}
+            tweetReceived=tweet
         else:
-            lineValue+=1
-            tweet=findStr(tweet,searchInitField,0)
-            tweet=findStr(tweet,searchEndField,1)
-            suma=0
-            # Select tweets in which sentiment words appear
-            tweetReceived=checkListinString(AffinDict,tweet)
-            SentimentsTuple.clear()
-            if (tweetReceived==""):
-                SentimentsTuple={'noSentiment':int(0)}
-                tweetReceived=tweet
-            else:
-                # Check value of tweet in line and return values
-                SentimentsTuple=checkSentValue(tweetReceived,AffinDict,SentimentsTuple)
-                #   Function to compute total value of sentiment
-                suma=int(sum(SentimentsTuple.itervalues()))
-            hw(lineValue,tweetReceived,SentimentsTuple,suma)
-
+            # Check value of tweet in line and return values
+            SentimentsTuple=checkSentValue(tweetReceived,AffinDict,SentimentsTuple)
+            #   Function to compute total value of sentiment
+            suma=int(sum(SentimentsTuple.itervalues()))
+            
+        hw(lineValue,tweetReceived,SentimentsTuple,suma)
 
     lines(sent_file)
     lines(tweet_file)

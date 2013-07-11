@@ -1,0 +1,3 @@
+README.txt
+Sorry about this problem. I have had the problem of I did not understand correctly the environment of data for the script. I built the problem in real time making computations inside of the loop of tweeter request. Thus this is the reason why I included the "import" sentence that result in error during your execution.  You need a "visible" twitterstream module to call the sript.
+I hope to have time enough to re-built the script in a correctly way.

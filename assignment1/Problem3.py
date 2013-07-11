@@ -104,9 +104,10 @@ def addterm(term, value, outdict):
     return outdict
 
 def main():
-    sent_file = open(sys.argv[1])   #   File AFINN-111.txt" --> sys.argv[1]
-    tweet_file = open(sys.argv[2])  #   File Output.txt --> sys.argv[2]
+    sent_file = open("AFINN-111.txt")   #   File AFINN-111.txt" --> sys.argv[1]
+    tweet_file = open("datos.txt")  #   File Output.txt --> sys.argv[2]
 
+    print "Assigment1-PROBLEM3:\n"
 
     searchInitField="\"description\":\""    
     searchEndField="\",\"protected"
@@ -126,6 +127,7 @@ def main():
     while 1:
         tweet=tweet_file.readline()
         tweet=tweet.strip()
+        tweet.encode('utf-8')
         if not tweet:
             break
         else:
